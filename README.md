@@ -1,36 +1,27 @@
-# cicd-pipeline-train-schedule-kubernetes
+#Auto scaling
 
-This is a simple train schedule app written using nodejs. It is intended to be used as a sample application for a series of hands-on learning activities.
+```
+git clone https://github.com/kubernetes-incubator/metrics-server.git
+cd metrics-server/
+git checkout ed0663b3b4ddbfab5afea166dfd68c677930d22e
+kubectl create -f deploy/1.8+/
+kubectl get --raw /apis/metrics.k8s.io/
+cd ~/
+git clone https://github.com/sivakumar-j-secondary-ac/15.1.5.0--ci-cd-train-schedule-phase-5.git
+cd cicd-pipeline-train-schedule-autoscaling/
+cat > train-schedule-kube.yml
+---paste the contents from master branch train-schedule-kube.yml file
+kubectl apply -f train-schedule-kube.yml
 
+Increase CPU by /generate-cpu-load or by the below busybox image commands
 
-# Things needed for this Phase-4
+kubectl run -i --tty load-generator --image=busybox /bin/sh
+while true; do wget -q -O- http://<kubernetes node public ip>:8080/generate-cpu-load; done
 
-## Pipeline:
- 
-  * Multibranch pipeline
+```
 
-## Plugins: 
+# Watch the hpa as it unfolds
 
- * Kubernetes Continuous Deploy
-
-
-## Credentials ID Needed:
-	* Docker hub : kind: uwp,un,pwd,ID: docker_hub_login
-	* Github:      kind: uwp,un,pwd: Github API token,ID: github_key
-	* K8:          kind: k8config,id: kubeconfig,kubeconfig~enter directly: master's cat ~/.kube/config 
-
-## Files changed from perv version:
-	*  new - train-schdule-kube.yml
-	*  mod - Jenkins file for k8 deployment
-
-## Acronym : 
-	* uwp  : username with password
-	* un   : username
-	* pwd  : password
-	* mod  : modified
-	* k8   : kubernetes
-	* k8config : kubernetes configuration  
-
-
-
-
+```
+kubectl get hpa -w 
+```
